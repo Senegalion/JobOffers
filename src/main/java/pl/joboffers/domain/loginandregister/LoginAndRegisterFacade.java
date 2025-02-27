@@ -13,10 +13,7 @@ public class LoginAndRegisterFacade {
         if (registerUserDto.username() == null || registerUserDto.password() == null) {
             throw new InvalidUserCredentialsException("Both username and password cannot be null");
         }
-        User user = User.builder()
-                .username(registerUserDto.username())
-                .password(registerUserDto.password())
-                .build();
+        User user = UserMapper.mapFromUserDto(registerUserDto);
         User savedUser = userRepository.save(user);
         return RegistrationResultDto.builder()
                 .userId(savedUser.userId())
