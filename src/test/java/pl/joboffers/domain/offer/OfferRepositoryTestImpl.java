@@ -35,4 +35,20 @@ public class OfferRepositoryTestImpl implements OfferRepository {
         offers.put(offerToBeSaved.id(), offerToBeSaved);
         return offerToBeSaved;
     }
+
+    @Override
+    public boolean existsByOfferUrl(Offer offer) {
+        List<String> retrievedOfferUrls = offers.values().stream()
+                .map(Offer::offerUrl)
+                .filter(offerUrl -> offerUrl.equals(offer.offerUrl()))
+                .toList();
+        return !retrievedOfferUrls.isEmpty();
+    }
+
+    @Override
+    public List<Offer> saveAll(List<Offer> newOffers) {
+        return newOffers.stream()
+                .map(this::save)
+                .toList();
+    }
 }
