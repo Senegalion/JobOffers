@@ -2,11 +2,11 @@ package pl.joboffers.domain.offer;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OfferRepositoryTestImpl implements OfferRepository {
-
     Map<String, Offer> offers = new ConcurrentHashMap<>();
 
     @Override
@@ -18,8 +18,8 @@ public class OfferRepositoryTestImpl implements OfferRepository {
     }
 
     @Override
-    public Offer findById(String id) {
-        return offers.get(id);
+    public Optional<Offer> findById(String id) {
+        return Optional.ofNullable(offers.get(id));
     }
 
     @Override

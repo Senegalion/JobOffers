@@ -9,6 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OfferFacade {
     private final OfferRepository offerRepository;
+    private final OfferService offerService;
 
     public List<OfferResponseDto> findAllOffers() {
         List<Offer> offers = offerRepository.findAll();
@@ -18,13 +19,24 @@ public class OfferFacade {
     }
 
     public OfferResponseDto findOfferById(String id) {
-        Offer offer = offerRepository.findById(id);
+        Offer offer = offerRepository
+                .findById(id)
+                .orElseThrow(() -> new OfferNotFoundException(
+                        String.format("Offer with id: [%s] does not exist", id)
+                ));
         return OfferMapper.mapToOfferResponseDto(offer);
     }
 
     public OfferResponseDto saveOffer(OfferRequestDto offerRequestDto) {
-        Offer offer = OfferMapper.mapFromOfferRequestDto(offerRequestDto);
+        Offer offer = OfferMapper.mapFromOfferRequestDtoToOffer(offerRequestDto);
         Offer savedOffer = offerRepository.save(offer);
         return OfferMapper.mapToOfferResponseDto(savedOffer);
+    }
+
+    public List<OfferResponseDto> fetchAllOffersAndSaveAllIfNotExists() {
+        List<Offer> offers = offerService.fetchAllAndSaveAllIfNotExists();
+        return offers.stream()
+                .map(OfferMapper::mapToOfferResponseDto)
+                .toList();
     }
 }
