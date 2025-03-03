@@ -2,6 +2,7 @@ package pl.joboffers.domain.offer;
 
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
+import pl.joboffers.domain.offer.dto.JobOfferResponseDto;
 import pl.joboffers.domain.offer.dto.OfferRequestDto;
 import pl.joboffers.domain.offer.dto.OfferResponseDto;
 
@@ -9,6 +10,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class OfferFacadeTest {
     @Test
@@ -83,18 +87,22 @@ class OfferFacadeTest {
         assertThat(offerFacade.findAllOffers()).hasSize(4);
     }
 
-//    @Test
-//    public void shouldThrowDuplicateKeyExceptionWhenOfferUrlExists() {
-//        OfferFacade offerFacade = new OfferFacadeTestConfiguration(List.of()).offerFacadeForTests();
-//        OfferResponseDto offerResponseDto = offerFacade.saveOffer(new OfferRequestDto("Company_1", "Position_1", "Salary_1", "OfferUrl_1"));
-//        String savedId = offerResponseDto.id();
-//        assertThat(offerFacade.findOfferById(savedId).id()).isEqualTo(savedId);
-//
-//        Throwable thrown = catchThrowable(() -> offerFacade.saveOffer(
-//                new OfferRequestDto("Company_2", "Position_2", "Salary_2", "OfferUrl_2")));
-//
-//        AssertionsForClassTypes.assertThat(thrown)
-//                .isInstanceOf(OfferDuplicateException.class)
-//                .hasMessage("Offer with offerUrl [OfferUrl_1] already exists");
-//    }
+    @Test
+    public void shouldThrowOfferSavingExceptionWhenDuplicateOffersAreFetched() {
+        OfferRepository offerRepository = mock(OfferRepository.class);
+        OfferFetchable offerFetcher = () -> List.of(
+                new JobOfferResponseDto("Company_1", "Position_1", "Salary_1", "OfferUrl_1")
+        );
+        OfferService offerService = new OfferService(offerFetcher, offerRepository);
+
+        when(offerRepository.saveAll(anyList())).thenThrow(new OfferDuplicateException("Offer with offerUrl [OfferUrl_1] already exists"));
+
+        Throwable thrown = catchThrowable(offerService::fetchAllAndSaveAllIfNotExists);
+
+        AssertionsForClassTypes.assertThat(thrown)
+                .isInstanceOf(OfferSavingException.class)
+                .hasMessageContaining("Offer with offerUrl [OfferUrl_1] already exists");
+    }
+
+
 }
