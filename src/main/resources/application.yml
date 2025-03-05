@@ -5,3 +5,18 @@ spring:
   data:
     mongodb:
       uri: mongodb://admin:admin@localhost:27017/job-offers
+
+offer:
+  http:
+    scheduler:
+      request:
+        delay: PT3H
+    client:
+      config:
+        connectionTimeout: 1000
+        port: 5057
+        readTimeout: 1000
+        uri: http://ec2-3-120-147-150.eu-central-1.compute.amazonaws.com
+
+scheduling:
+  enabled: true
