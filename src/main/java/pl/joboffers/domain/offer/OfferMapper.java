@@ -26,8 +26,8 @@ class OfferMapper {
 
     public static Offer mapFromJobOfferResponseToOffer(JobOfferResponseDto jobOfferResponseDto) {
         return Offer.builder()
-                .companyName(jobOfferResponseDto.companyName())
-                .position(jobOfferResponseDto.position())
+                .companyName(jobOfferResponseDto.title())
+                .position(jobOfferResponseDto.company())
                 .salary(jobOfferResponseDto.salary())
                 .offerUrl(jobOfferResponseDto.offerUrl())
                 .build();
