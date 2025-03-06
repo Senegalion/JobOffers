@@ -22,7 +22,7 @@ class OfferService {
     private List<Offer> filterNotExistingOffers(List<Offer> offers) {
         return offers.stream()
                 .filter(offer -> !offer.offerUrl().isEmpty())
-                .filter(offer -> !offerRepository.existsByOfferUrl(offer))
+                .filter(offer -> !offerRepository.existsByOfferUrl(offer.offerUrl()))
                 .toList();
     }
 
