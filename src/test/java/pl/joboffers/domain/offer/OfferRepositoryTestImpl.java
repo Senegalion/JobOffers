@@ -6,10 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.FluentQuery;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -44,24 +41,21 @@ public class OfferRepositoryTestImpl implements OfferRepository {
     }
 
     @Override
-    public boolean existsByOfferUrl(Offer offer) {
-        List<String> retrievedOfferUrls = offers.values().stream()
-                .map(Offer::offerUrl)
-                .filter(offerUrl -> offerUrl.equals(offer.offerUrl()))
+    public boolean existsByOfferUrl(String offerUrl) {
+        List<Offer> retrievedOfferUrls = offers.values().stream()
+                .filter(offer -> offerUrl.equals(offer.offerUrl()))
                 .toList();
         return !retrievedOfferUrls.isEmpty();
     }
 
     @Override
-    public List<Offer> saveAll(List<Offer> newOffers) {
-        return newOffers.stream()
+    public <S extends Offer> List<S> saveAll(Iterable<S> entities) {
+        List<Offer> newOffers = new ArrayList<>();
+        entities.forEach(newOffers::add);
+
+        return (List<S>) newOffers.stream()
                 .map(this::save)
                 .toList();
-    }
-
-    @Override
-    public <S extends Offer> List<S> saveAll(Iterable<S> entities) {
-        return null;
     }
 
     @Override
