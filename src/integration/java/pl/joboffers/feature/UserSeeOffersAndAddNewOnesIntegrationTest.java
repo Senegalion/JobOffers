@@ -6,7 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import pl.joboffers.BaseIntegrationTest;
 import pl.joboffers.SampleJobOfferResponse;
+import pl.joboffers.domain.offer.dto.OfferResponseDto;
 import pl.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTest implements SampleJobOfferResponse {
     @Autowired
@@ -22,8 +27,8 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                         .withBody(bodyWithZeroOffersJson())));
 
         // step 2: scheduler ran 1st time and made GET to external server and system added 0 offers to database
-        offerFetcherScheduler.fetchAllOffersAndSaveAllIfNotExists();
-
+        List<OfferResponseDto> offerResponseDtos = offerFetcherScheduler.fetchAllOffersAndSaveAllIfNotExists();
+        assertThat(offerResponseDtos).isEmpty();
         // step 3: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned UNAUTHORIZED(401)
         // step 4: user made GET /offers with no jwt token and system returned UNAUTHORIZED(401)
         // step 5: user made POST /register with username=someUser, password=somePassword and system registered user with status OK(200)
