@@ -26,7 +26,7 @@ public class BaseIntegrationTest {
     public static final String WIRE_MOCK_HOST = "http://localhost";
 
     @Autowired
-    MockMvc mockMvc;
+    public MockMvc mockMvc;
 
     @Container
     public static final MongoDBContainer mongoDBContainer =
