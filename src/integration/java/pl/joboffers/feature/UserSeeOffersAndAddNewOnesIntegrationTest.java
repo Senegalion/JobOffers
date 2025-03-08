@@ -66,7 +66,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
 
         // when
         ResultActions resultActionsForGettingOfferWithNonExistingId = mockMvc
-                .perform(get(offersUrl + nonExistingOfferId)
+                .perform(get(offersUrl + "/" + nonExistingOfferId)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
