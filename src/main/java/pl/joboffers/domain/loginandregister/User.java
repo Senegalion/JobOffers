@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document("users")
 record User(
         @Id
-        @Field("id")
         String userId,
         @Field("username")
         @Indexed(unique = true)

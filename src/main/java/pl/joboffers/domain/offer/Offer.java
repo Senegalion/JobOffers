@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document("offers")
 record Offer(
         @Id
-        @Field("id")
         String id,
         @Field("company")
         String companyName,
