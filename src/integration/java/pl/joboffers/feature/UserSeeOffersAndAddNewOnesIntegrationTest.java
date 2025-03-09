@@ -26,7 +26,9 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
     @Test
     public void userWantToSeeOffersButHaveToBeLoggedInAndExternalServerShouldHaveSomeOffers() throws Exception {
         // step 1: there are no offers in external HTTP server
-        wireMockServer.stubFor(WireMock.get("/offers")
+        String offersUrl = "/offers";
+
+        wireMockServer.stubFor(WireMock.get(offersUrl)
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", "application/json")
@@ -42,7 +44,6 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         // step 6: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned OK(200) and jwttoken=AAAA.BBBB.CCC
         // step 7: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 0 offers
         // given
-        String offersUrl = "/offers";
 
         // when
         ResultActions resultActions = mockMvc.perform(get(offersUrl)
@@ -74,7 +75,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         resultActionsForGettingOfferWithNonExistingId.andExpect(status().isNotFound())
                 .andExpect(content().json("""
                         {
-                        "message" : "Not found for id: 9999",
+                        "message" : "Offer with id: [9999] not found",
                         "status": "NOT_FOUND"
                         }
                         """.trim()
