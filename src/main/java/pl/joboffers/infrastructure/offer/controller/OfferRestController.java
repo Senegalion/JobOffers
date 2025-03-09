@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/offers")
 @AllArgsConstructor
-public class OffersRestController {
+public class OfferRestController {
     OfferFacade offerFacade;
 
     @GetMapping
