@@ -1,12 +1,11 @@
 package pl.joboffers.infrastructure.offer.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.joboffers.domain.offer.OfferFacade;
+import pl.joboffers.domain.offer.dto.OfferRequestDto;
 import pl.joboffers.domain.offer.dto.OfferResponseDto;
 
 import java.util.List;
@@ -27,5 +26,11 @@ public class OfferRestController {
     public ResponseEntity<OfferResponseDto> getOfferById(@PathVariable String offerId) {
         OfferResponseDto offerFound = offerFacade.findOfferById(offerId);
         return ResponseEntity.ok(offerFound);
+    }
+
+    @PostMapping()
+    public ResponseEntity<OfferResponseDto> addOffer(@RequestBody OfferRequestDto offer) {
+        OfferResponseDto offerResponseDto = offerFacade.saveOffer(offer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(offerResponseDto);
     }
 }
