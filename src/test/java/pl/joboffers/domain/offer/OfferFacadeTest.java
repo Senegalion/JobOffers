@@ -2,6 +2,7 @@ package pl.joboffers.domain.offer;
 
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DuplicateKeyException;
 import pl.joboffers.domain.offer.dto.JobOfferResponseDto;
 import pl.joboffers.domain.offer.dto.OfferRequestDto;
 import pl.joboffers.domain.offer.dto.OfferResponseDto;
@@ -95,12 +96,12 @@ class OfferFacadeTest {
         );
         OfferService offerService = new OfferService(offerFetcher, offerRepository);
 
-        when(offerRepository.saveAll(anyList())).thenThrow(new OfferDuplicateException("Offer with offerUrl [OfferUrl_1] already exists"));
+        when(offerRepository.saveAll(anyList())).thenThrow(new DuplicateKeyException("Offer with offerUrl [OfferUrl_1] already exists"));
 
         Throwable thrown = catchThrowable(offerService::fetchAllAndSaveAllIfNotExists);
 
         AssertionsForClassTypes.assertThat(thrown)
-                .isInstanceOf(OfferSavingException.class)
+                .isInstanceOf(DuplicateKeyException.class)
                 .hasMessageContaining("Offer with offerUrl [OfferUrl_1] already exists");
     }
 
