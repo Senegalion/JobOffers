@@ -110,11 +110,33 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         OfferResponseDto offerResponseDto = objectMapper.readValue(jsonForAddingNewOffer, OfferResponseDto.class);
 
         assertAll(
+                () -> assertThat(offerResponseDto.id()).isNotNull(),
                 () -> assertThat(offerResponseDto.companyName()).isEqualTo("testCompany"),
                 () -> assertThat(offerResponseDto.position()).isEqualTo("testPosition"),
                 () -> assertThat(offerResponseDto.salary()).isEqualTo("5000 - 8000 PLN"),
-                () -> assertThat(offerResponseDto.offerUrl()).isEqualTo("https://joboffers/testOffers/1"),
-                () -> assertThat(offerResponseDto.id()).isNotNull()
+                () -> assertThat(offerResponseDto.offerUrl()).isEqualTo("https://joboffers/testOffers/1")
+        );
+
+        // step 17: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 1 offer
+        // given
+        // when
+        String newlyAddedOfferId = offerResponseDto.id();
+        ResultActions resultActionsForGettingOffer = mockMvc.perform(get(offersUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        MvcResult mvcResultForGettingOffer = resultActionsForGettingOffer.andExpect(status().isOk()).andReturn();
+        String jsonForGettingOffer = mvcResultForGettingOffer.getResponse().getContentAsString();
+        List<OfferResponseDto> retrievedOffers = objectMapper.readValue(
+                jsonForGettingOffer,
+                objectMapper.getTypeFactory().constructCollectionType(List.class, OfferResponseDto.class));
+        assertAll(
+                () -> assertThat(retrievedOffers).hasSize(1),
+                () -> {
+                    assert retrievedOffers != null;
+                    assertThat(retrievedOffers.stream().map(OfferResponseDto::id).toList()).contains(newlyAddedOfferId);
+                }
         );
     }
 }
