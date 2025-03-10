@@ -32,7 +32,7 @@ public class ApiValidationFailedIntegrationTest extends BaseIntegrationTest {
                         }
                         """.trim()
                 )
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON + ";charset=UTF-8")
         );
 
         // then
@@ -48,6 +48,60 @@ public class ApiValidationFailedIntegrationTest extends BaseIntegrationTest {
                 POSITION_MUST_NOT_BE_EMPTY,
                 SALARY_MUST_NOT_BE_EMPTY,
                 OFFER_URL_MUST_NOT_BE_EMPTY
+        );
+    }
+
+    @Test
+    public void should_return_400_bad_request_and_validation_message_when_company_name_and_offer_url_is_empty() throws Exception {
+        // given
+        // when
+        ResultActions perform = mockMvc.perform(post(ADD_OFFER_ENDPOINT)
+                .content("""
+                        {
+                            "companyName":"",
+                            "position":"testPosition",
+                            "salary":"5000 - 8000 PLN",
+                            "offerUrl":""
+                        }
+                        """.trim()
+                )
+                .contentType(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+        );
+
+        // then
+        MvcResult mvcResult = perform.andExpect(status().isBadRequest()).andReturn();
+        String json = mvcResult.getResponse().getContentAsString();
+        ApiValidationErrorDto result = objectMapper.readValue(json, ApiValidationErrorDto.class);
+        assertThat(result.errorMessages()).containsExactlyInAnyOrder(
+                COMPANY_NAME_MUST_NOT_BE_EMPTY,
+                OFFER_URL_MUST_NOT_BE_EMPTY
+        );
+    }
+
+    @Test
+    public void should_return_400_bad_request_and_validation_message_when_position_is_null_and_salary_is_empty() throws Exception {
+        // given
+        // when
+        ResultActions perform = mockMvc.perform(post(ADD_OFFER_ENDPOINT)
+                .content("""
+                        {
+                            "companyName":"testCompany",
+                            "salary":"",
+                            "offerUrl":"https://joboffers/testOffers/1"
+                        }
+                        """.trim()
+                )
+                .contentType(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+        );
+
+        // then
+        MvcResult mvcResult = perform.andExpect(status().isBadRequest()).andReturn();
+        String json = mvcResult.getResponse().getContentAsString();
+        ApiValidationErrorDto result = objectMapper.readValue(json, ApiValidationErrorDto.class);
+        assertThat(result.errorMessages()).containsExactlyInAnyOrder(
+                POSITION_MUST_NOT_BE_NULL,
+                POSITION_MUST_NOT_BE_EMPTY,
+                SALARY_MUST_NOT_BE_EMPTY
         );
     }
 }
