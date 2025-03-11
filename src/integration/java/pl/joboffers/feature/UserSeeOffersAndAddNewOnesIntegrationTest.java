@@ -24,13 +24,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTest implements SampleJobOfferResponse {
     @Autowired
     OfferFetcherScheduler offerFetcherScheduler;
+    private static final String OFFERS_URL_ENDPOINT = "/offers";
 
     @Test
     public void userWantToSeeOffersButHaveToBeLoggedInAndExternalServerShouldHaveSomeOffers() throws Exception {
         // step 1: there are no offers in external HTTP server
-        String offersUrl = "/offers";
-
-        wireMockServer.stubFor(WireMock.get(offersUrl)
+        // given & when & then
+        wireMockServer.stubFor(WireMock.get(OFFERS_URL_ENDPOINT)
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", "application/json")
@@ -48,7 +48,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         // given
 
         // when
-        ResultActions resultActions = mockMvc.perform(get(offersUrl)
+        ResultActions resultActions = mockMvc.perform(get(OFFERS_URL_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -61,7 +61,17 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         assertThat(offerResponses).isEmpty();
 
         // step 8: there are 2 new offers in external HTTP server
+        // given & when & then
+        wireMockServer.stubFor(WireMock.get(OFFERS_URL_ENDPOINT)
+                .willReturn(WireMock.aResponse()
+                        .withStatus(HttpStatus.OK.value())
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(bodyWithTwoOffersJson())));
+
         // step 9: scheduler ran 2nd time and made GET to external server and system added 2 new offers with ids: 1000 and 2000 to database
+        List<OfferResponseDto> offerResponseDtosWithTwoOffers = offerFetcherScheduler.fetchAllOffersAndSaveAllIfNotExists();
+        assertThat(offerResponseDtosWithTwoOffers).hasSize(2);
+
         // step 10: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 2 offers with ids: 1000 and 2000
         // step 11: user made GET /offers/9999 and system returned NOT_FOUND(404) with message “Offer with id 9999 not found”
         //given
@@ -69,7 +79,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
 
         // when
         ResultActions resultActionsForGettingOfferWithNonExistingId = mockMvc
-                .perform(get(offersUrl + "/" + nonExistingOfferId)
+                .perform(get(OFFERS_URL_ENDPOINT + "/" + nonExistingOfferId)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
@@ -91,7 +101,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         // given
         // when
         ResultActions resultActionsForAddingNewOffer = mockMvc
-                .perform(post(offersUrl)
+                .perform(post(OFFERS_URL_ENDPOINT)
                         .content("""
                                 {
                                     "companyName":"testCompany",
@@ -117,11 +127,11 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                 () -> assertThat(offerResponseDto.offerUrl()).isEqualTo("https://joboffers/testOffers/1")
         );
 
-        // step 17: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 1 offer
+        // step 17: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 3 offers
         // given
         // when
         String newlyAddedOfferId = offerResponseDto.id();
-        ResultActions resultActionsForGettingOffer = mockMvc.perform(get(offersUrl)
+        ResultActions resultActionsForGettingOffer = mockMvc.perform(get(OFFERS_URL_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -132,7 +142,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                 jsonForGettingOffer,
                 objectMapper.getTypeFactory().constructCollectionType(List.class, OfferResponseDto.class));
         assertAll(
-                () -> assertThat(retrievedOffers).hasSize(1),
+                () -> assertThat(retrievedOffers).hasSize(3),
                 () -> {
                     assert retrievedOffers != null;
                     assertThat(retrievedOffers.stream().map(OfferResponseDto::id).toList()).contains(newlyAddedOfferId);
