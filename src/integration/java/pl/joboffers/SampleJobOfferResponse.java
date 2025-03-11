@@ -55,13 +55,13 @@ public interface SampleJobOfferResponse {
                 {
                 "title": "Junior Java Developer",
                 "company": "Sollers Consulting",
-                "salary": "7 500 – 11 500 PLN",
+                "salary": "7 500 - 11 500 PLN",
                 "offerUrl": "https://nofluffjobs.com/pl/job/junior-java-developer-sollers-consulting-warszawa-s6et1ucc"
                 },
                 {
                 "title": "Junior Full Stack Developer",
                 "company": "Vertabelo S.A.",
-                "salary": "7 000 – 9 000 PLN",
+                "salary": "7 000 - 9 000 PLN",
                 "offerUrl": "https://nofluffjobs.com/pl/job/junior-full-stack-developer-vertabelo-remote-k7m9xpnm"
                 }
                 ]

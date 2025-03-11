@@ -32,7 +32,7 @@ public class ApiValidationFailedIntegrationTest extends BaseIntegrationTest {
                         }
                         """.trim()
                 )
-                .contentType(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
         );
 
         // then
@@ -65,7 +65,7 @@ public class ApiValidationFailedIntegrationTest extends BaseIntegrationTest {
                         }
                         """.trim()
                 )
-                .contentType(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
         );
 
         // then
@@ -91,7 +91,7 @@ public class ApiValidationFailedIntegrationTest extends BaseIntegrationTest {
                         }
                         """.trim()
                 )
-                .contentType(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
         );
 
         // then

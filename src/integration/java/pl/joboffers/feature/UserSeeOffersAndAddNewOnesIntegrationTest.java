@@ -69,10 +69,63 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                         .withBody(bodyWithTwoOffersJson())));
 
         // step 9: scheduler ran 2nd time and made GET to external server and system added 2 new offers with ids: 1000 and 2000 to database
+        // given
+        // when
         List<OfferResponseDto> offerResponseDtosWithTwoOffers = offerFetcherScheduler.fetchAllOffersAndSaveAllIfNotExists();
+
+        // then
         assertThat(offerResponseDtosWithTwoOffers).hasSize(2);
+        assertAll(
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(0).id()).isNotNull(),
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(0).companyName()).isEqualTo("Software Engineer - Mobile (m/f/d)"),
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(0).position()).isEqualTo("Cybersource"),
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(0).salary()).isEqualTo("4k - 8k PLN"),
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(0).offerUrl()).isEqualTo("https://nofluffjobs.com/pl/job/software-engineer-mobile-m-f-d-cybersource-poznan-entavdpn"),
+
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(1).id()).isNotNull(),
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(1).companyName()).isEqualTo("Junior DevOps Engineer"),
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(1).position()).isEqualTo("CDQ Poland"),
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(1).salary()).isEqualTo("8k - 14k PLN"),
+                () -> assertThat(offerResponseDtosWithTwoOffers.get(1).offerUrl()).isEqualTo("https://nofluffjobs.com/pl/job/junior-devops-engineer-cdq-poland-wroclaw-gnymtxqd")
+        );
 
         // step 10: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 2 offers with ids: 1000 and 2000
+        // given
+        // when
+        ResultActions resultActionsForGettingNewlyAddedOffers = mockMvc
+                .perform(get(OFFERS_URL_ENDPOINT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                );
+        MvcResult mvcResultForGettingNewlyAddedOffers = resultActionsForGettingNewlyAddedOffers.andExpect(status().isOk()).andReturn();
+        String jsonForGettingOfferNewlyAddedOffers = mvcResultForGettingNewlyAddedOffers.getResponse().getContentAsString();
+        List<OfferResponseDto> retrievedNewlyAddedOffers = objectMapper.readValue(
+                jsonForGettingOfferNewlyAddedOffers,
+                objectMapper.getTypeFactory().constructCollectionType(List.class, OfferResponseDto.class));
+
+        // then
+        assertThat(retrievedNewlyAddedOffers).hasSize(2);
+        OfferResponseDto firstOffer = retrievedNewlyAddedOffers.get(0);
+        OfferResponseDto secondOffer = retrievedNewlyAddedOffers.get(1);
+
+        assertAll(
+                () -> {
+                    assertThat(firstOffer).isEqualTo(OfferResponseDto.builder()
+                            .id(firstOffer.id())
+                            .companyName(firstOffer.companyName())
+                            .position(firstOffer.position())
+                            .salary(firstOffer.salary())
+                            .offerUrl(firstOffer.offerUrl())
+                            .build());
+                },
+                () -> assertThat(secondOffer).isEqualTo(OfferResponseDto.builder()
+                        .id(secondOffer.id())
+                        .companyName(secondOffer.companyName())
+                        .position(secondOffer.position())
+                        .salary(secondOffer.salary())
+                        .offerUrl(secondOffer.offerUrl())
+                        .build())
+        );
+
         // step 11: user made GET /offers/9999 and system returned NOT_FOUND(404) with message “Offer with id 9999 not found”
         //given
         String nonExistingOfferId = "9999";
@@ -94,9 +147,80 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                 ));
 
         // step 12: user made GET /offers/1000 and system returned OK(200) with offer
+        // given
+        String firstOfferId = firstOffer.id();
+
+        // when
+        ResultActions performForGettingNewOffer = mockMvc.perform(get(OFFERS_URL_ENDPOINT + "/" + firstOfferId).contentType(MediaType.APPLICATION_JSON));
+        MvcResult resultForGettingNewOffer = performForGettingNewOffer.andExpect(status().isOk()).andReturn();
+        String jsonForGettingNewOffer = resultForGettingNewOffer.getResponse().getContentAsString();
+        OfferResponseDto newOffer = objectMapper.readValue(jsonForGettingNewOffer, OfferResponseDto.class);
+
+        assertThat(newOffer).isEqualTo(firstOffer);
+
         // step 13: there are 2 new offers in external HTTP server
+        // given & when & then
+        wireMockServer.stubFor(WireMock.get(OFFERS_URL_ENDPOINT)
+                .willReturn(WireMock.aResponse()
+                        .withStatus(HttpStatus.OK.value())
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(bodyWithFourOffersJson())));
+
         // step 14: scheduler ran 3rd time and made GET to external server and system added 2 new offers with ids: 3000 and 4000 to database
+        // given
+        // when
+        List<OfferResponseDto> nextToOffers = offerFetcherScheduler.fetchAllOffersAndSaveAllIfNotExists();
+
+        // then
+        assertThat(nextToOffers).hasSize(2);
+        assertAll(
+                () -> assertThat(nextToOffers.get(0).id()).isNotNull(),
+                () -> assertThat(nextToOffers.get(0).companyName()).isEqualTo("Junior Java Developer"),
+                () -> assertThat(nextToOffers.get(0).position()).isEqualTo("Sollers Consulting"),
+                () -> assertThat(nextToOffers.get(0).salary()).isEqualTo("7 500 - 11 500 PLN"),
+                () -> assertThat(nextToOffers.get(0).offerUrl()).isEqualTo("https://nofluffjobs.com/pl/job/junior-java-developer-sollers-consulting-warszawa-s6et1ucc"),
+
+                () -> assertThat(nextToOffers.get(1).id()).isNotNull(),
+                () -> assertThat(nextToOffers.get(1).companyName()).isEqualTo("Junior Full Stack Developer"),
+                () -> assertThat(nextToOffers.get(1).position()).isEqualTo("Vertabelo S.A."),
+                () -> assertThat(nextToOffers.get(1).salary()).isEqualTo("7 000 - 9 000 PLN"),
+                () -> assertThat(nextToOffers.get(1).offerUrl()).isEqualTo("https://nofluffjobs.com/pl/job/junior-full-stack-developer-vertabelo-remote-k7m9xpnm")
+        );
+
         // step 15: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 4 offers with ids: 1000,2000, 3000 and 4000
+        // given
+        // when
+        ResultActions resultActionsForGettingFourOffers = mockMvc.perform(get(OFFERS_URL_ENDPOINT)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        MvcResult resultForGettingFourOffers = resultActionsForGettingFourOffers.andExpect(status().isOk()).andReturn();
+        String jsonForGettingFourOffer = resultForGettingFourOffers.getResponse().getContentAsString();
+        List<OfferResponseDto> retrievedFourOffers = objectMapper.readValue(
+                jsonForGettingFourOffer,
+                objectMapper.getTypeFactory().constructCollectionType(List.class, OfferResponseDto.class));
+
+        assertThat(retrievedFourOffers).hasSize(4);
+        OfferResponseDto expectedThirdOffer = nextToOffers.get(0);
+        OfferResponseDto expectedFourthOffer = nextToOffers.get(1);
+        assertThat(retrievedFourOffers).contains(
+                new OfferResponseDto(
+                        expectedThirdOffer.id(),
+                        expectedThirdOffer.companyName(),
+                        expectedThirdOffer.position(),
+                        expectedThirdOffer.salary(),
+                        expectedThirdOffer.offerUrl()
+                ),
+                new OfferResponseDto(
+                        expectedFourthOffer.id(),
+                        expectedFourthOffer.companyName(),
+                        expectedFourthOffer.position(),
+                        expectedFourthOffer.salary(),
+                        expectedFourthOffer.offerUrl()
+                )
+        );
+
         // step 16: user made POST /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and offer as body and system returned CREATED(201) with saved offer
         // given
         // when
@@ -111,7 +235,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                                 }
                                 """.trim()
                         )
-                        .contentType(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+                        .contentType(MediaType.APPLICATION_JSON)
                 );
 
         // then
@@ -127,10 +251,11 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                 () -> assertThat(offerResponseDto.offerUrl()).isEqualTo("https://joboffers/testOffers/1")
         );
 
-        // step 17: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 3 offers
+        // step 17: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 5 offers
         // given
-        // when
         String newlyAddedOfferId = offerResponseDto.id();
+
+        // when
         ResultActions resultActionsForGettingOffer = mockMvc.perform(get(OFFERS_URL_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
         );
@@ -142,7 +267,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                 jsonForGettingOffer,
                 objectMapper.getTypeFactory().constructCollectionType(List.class, OfferResponseDto.class));
         assertAll(
-                () -> assertThat(retrievedOffers).hasSize(3),
+                () -> assertThat(retrievedOffers).hasSize(5),
                 () -> {
                     assert retrievedOffers != null;
                     assertThat(retrievedOffers.stream().map(OfferResponseDto::id).toList()).contains(newlyAddedOfferId);
