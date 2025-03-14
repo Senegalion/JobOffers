@@ -16,9 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class OfferHttpClientErrorsIntegrationTest implements SampleJobOfferResponse {
-    public static final String WIRE_MOCK_HOST = "http://localhost";
-    public static final int CONNECTION_TIMEOUT = 5000;
-    public static final int READ_TIMEOUT = 5000;
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String APPLICATION_JSON = "application/json";
     public static final String INTERNAL_SERVER_ERROR = "500 INTERNAL_SERVER_ERROR";

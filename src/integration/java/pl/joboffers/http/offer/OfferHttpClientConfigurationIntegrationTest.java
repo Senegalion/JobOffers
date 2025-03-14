@@ -8,6 +8,8 @@ import pl.joboffers.infrastructure.offer.http.OfferHttpClientConfig;
 
 public class OfferHttpClientConfigurationIntegrationTest extends OfferHttpClientConfig {
     public static final String WIRE_MOCK_HOST = "http://localhost";
+    public static final int CONNECTION_TIMEOUT = 5000;
+    public static final int READ_TIMEOUT = 5000;
 
     private final WireMockExtension wireMockServer;
 
@@ -16,7 +18,7 @@ public class OfferHttpClientConfigurationIntegrationTest extends OfferHttpClient
     }
 
     public OfferFetchable remoteOfferFetcherClient() {
-        RestTemplate restTemplate = restTemplate(1000, 1000, restTemplateResponseErrorHandler());
+        RestTemplate restTemplate = restTemplate(CONNECTION_TIMEOUT, READ_TIMEOUT, restTemplateResponseErrorHandler());
         return new OfferHttpClient(restTemplate, WIRE_MOCK_HOST, wireMockServer.getPort());
     }
 }
