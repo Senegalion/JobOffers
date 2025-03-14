@@ -53,7 +53,11 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                         .withBody(bodyWithZeroOffersJson())));
 
         // step 2: scheduler ran 1st time and made GET to external server and system added 0 offers to database
+        // given
+        // when
         List<OfferResponseDto> offerResponseDtos = offerFetcherScheduler.fetchAllOffersAndSaveAllIfNotExists();
+
+        // then
         assertThat(offerResponseDtos).isEmpty();
 
         // step 3: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned UNAUTHORIZED(401)
@@ -62,7 +66,6 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         // step 6: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned OK(200) and jwttoken=AAAA.BBBB.CCC
         // step 7: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 0 offers
         // given
-
         // when
         ResultActions resultActions = mockMvc.perform(get(OFFERS_URL_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -112,13 +115,14 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                 .perform(get(OFFERS_URL_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
+
+        // then
         MvcResult mvcResultForGettingNewlyAddedOffers = resultActionsForGettingNewlyAddedOffers.andExpect(status().isOk()).andReturn();
         String jsonForGettingOfferNewlyAddedOffers = mvcResultForGettingNewlyAddedOffers.getResponse().getContentAsString();
         List<OfferResponseDto> retrievedNewlyAddedOffers = objectMapper.readValue(
                 jsonForGettingOfferNewlyAddedOffers,
                 objectMapper.getTypeFactory().constructCollectionType(List.class, OfferResponseDto.class));
 
-        // then
         assertThat(retrievedNewlyAddedOffers).hasSize(2);
         OfferResponseDto firstOffer = retrievedNewlyAddedOffers.get(0);
         OfferResponseDto secondOffer = retrievedNewlyAddedOffers.get(1);
@@ -168,10 +172,11 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
 
         // when
         ResultActions performForGettingNewOffer = mockMvc.perform(get(OFFERS_URL_ENDPOINT + "/" + firstOfferId).contentType(MediaType.APPLICATION_JSON));
+
+        // then
         MvcResult resultForGettingNewOffer = performForGettingNewOffer.andExpect(status().isOk()).andReturn();
         String jsonForGettingNewOffer = resultForGettingNewOffer.getResponse().getContentAsString();
         OfferResponseDto newOffer = objectMapper.readValue(jsonForGettingNewOffer, OfferResponseDto.class);
-
         assertThat(newOffer).isEqualTo(firstOffer);
 
         // step 13: there are 2 new offers in external HTTP server
