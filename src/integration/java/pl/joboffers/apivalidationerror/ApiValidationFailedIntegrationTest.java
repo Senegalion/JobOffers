@@ -2,6 +2,7 @@ package pl.joboffers.apivalidationerror;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
@@ -39,6 +40,7 @@ public class ApiValidationFailedIntegrationTest extends BaseIntegrationTest {
     public static final String OFFER_URL_MUST_NOT_BE_EMPTY = "OFFER_URL MUST NOT BE EMPTY";
 
     @Test
+    @WithMockUser
     public void should_return_400_bad_request_and_validation_message_when_request_is_empty() throws Exception {
         // given
         // when
@@ -68,6 +70,7 @@ public class ApiValidationFailedIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     public void should_return_400_bad_request_and_validation_message_when_company_name_and_offer_url_is_empty() throws Exception {
         // given
         // when
@@ -95,6 +98,7 @@ public class ApiValidationFailedIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @WithMockUser
     public void should_return_400_bad_request_and_validation_message_when_position_is_null_and_salary_is_empty() throws Exception {
         // given
         // when
