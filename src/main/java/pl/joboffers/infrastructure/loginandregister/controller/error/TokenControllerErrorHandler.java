@@ -1,4 +1,4 @@
-package pl.joboffers.infrastructure.token.controller.error;
+package pl.joboffers.infrastructure.loginandregister.controller.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

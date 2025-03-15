@@ -14,6 +14,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 import pl.joboffers.BaseIntegrationTest;
 import pl.joboffers.SampleJobOfferResponse;
+import pl.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import pl.joboffers.domain.offer.dto.OfferResponseDto;
 import pl.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 
@@ -31,6 +32,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
     public static final MongoDBContainer mongoDBContainer =
             new MongoDBContainer(DockerImageName.parse("mongo:4.0.10"));
     public static final String TOKEN = "/token";
+    public static final String REGISTER = "/register";
 
     @DynamicPropertySource
     public static void propertyOverride(DynamicPropertyRegistry registry) {
@@ -86,10 +88,35 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                 ));
 
         // step 4: user made GET /offers with no jwt token and system returned UNAUTHORIZED(401)
+        // given
+        // when
+        // then
         mockMvc.perform(get(OFFERS).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
 
         // step 5: user made POST /register with username=someUser, password=somePassword and system registered user with status OK(200)
+        // given
+        // when
+        ResultActions performRegister = mockMvc.perform(post(REGISTER)
+                .content("""
+                        {
+                        "username" : "someUser",
+                        "password": "somePassword"
+                        }
+                        """.trim()
+                )
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        MvcResult mvcResultRegister = performRegister.andExpect(status().isCreated()).andReturn();
+        String jsonRegister = mvcResultRegister.getResponse().getContentAsString();
+        RegistrationResultDto registrationResultDto = objectMapper.readValue(jsonRegister, RegistrationResultDto.class);
+        assertAll(
+                () -> assertThat(registrationResultDto.userId()).isNotNull(),
+                () -> assertThat(registrationResultDto.wasCreated()).isTrue(),
+                () -> assertThat(registrationResultDto.username()).isEqualTo("someUser")
+        );
+
         // step 6: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned OK(200) and jwttoken=AAAA.BBBB.CCC
         // step 7: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 0 offers
         // given
