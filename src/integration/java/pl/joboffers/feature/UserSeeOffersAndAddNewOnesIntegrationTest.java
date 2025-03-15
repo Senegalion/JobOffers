@@ -30,6 +30,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
     @Container
     public static final MongoDBContainer mongoDBContainer =
             new MongoDBContainer(DockerImageName.parse("mongo:4.0.10"));
+    public static final String TOKEN = "/token";
 
     @DynamicPropertySource
     public static void propertyOverride(DynamicPropertyRegistry registry) {
@@ -61,6 +62,29 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         assertThat(offerResponseDtos).isEmpty();
 
         // step 3: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned UNAUTHORIZED(401)
+        // given
+        // when
+        ResultActions failedPerformToGetJWTToken = mockMvc.perform(post(TOKEN)
+                .content("""
+                        {
+                        "username" : "someUser",
+                        "password": "somePassword"
+                        }
+                        """.trim())
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        failedPerformToGetJWTToken
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().json("""
+                        {
+                        "message" : "Bad credentials",
+                        "status": "UNAUTHORIZED"
+                        }
+                        """.trim()
+                ));
+
         // step 4: user made GET /offers with no jwt token and system returned UNAUTHORIZED(401)
         // step 5: user made POST /register with username=someUser, password=somePassword and system registered user with status OK(200)
         // step 6: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned OK(200) and jwttoken=AAAA.BBBB.CCC
