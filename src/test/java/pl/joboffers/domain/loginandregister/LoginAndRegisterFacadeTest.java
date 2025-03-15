@@ -1,6 +1,8 @@
 package pl.joboffers.domain.loginandregister;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import pl.joboffers.domain.loginandregister.dto.RegisterUserDto;
 import pl.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import pl.joboffers.domain.loginandregister.dto.UserDto;
@@ -70,6 +72,6 @@ class LoginAndRegisterFacadeTest {
                 .createForTest(userRepository);
         String testUsername = TestCredentials.getUsername();
 
-        assertThrows(UsernameNotFoundException.class, () -> loginAndRegisterFacade.findByUsername(testUsername));
+        assertThrows(BadCredentialsException.class, () -> loginAndRegisterFacade.findByUsername(testUsername));
     }
 }

@@ -1,4 +1,4 @@
-package pl.joboffers.domain.loginandregister.dto;
+package pl.joboffers.infrastructure.loginandregister.controller.dto;
 
 import lombok.Builder;
 
@@ -6,12 +6,12 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Builder
-public record RegisterUserDto(
-        @NotNull(message = "{username.not.null}")
+public record TokenRequestDto(
         @NotEmpty(message = "{username.not.empty}")
+        @NotNull(message = "{username.not.null}")
         String username,
-        @NotNull(message = "{password.not.null}")
         @NotEmpty(message = "{password.not.empty}")
+        @NotNull(message = "{password.not.null}")
         String password
 ) {
 }

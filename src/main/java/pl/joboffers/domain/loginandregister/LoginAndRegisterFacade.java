@@ -1,6 +1,7 @@
 package pl.joboffers.domain.loginandregister;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import pl.joboffers.domain.loginandregister.dto.RegisterUserDto;
 import pl.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import pl.joboffers.domain.loginandregister.dto.UserDto;
@@ -25,6 +26,6 @@ public class LoginAndRegisterFacade {
     public UserDto findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .map(user -> new UserDto(user.userId(), user.username(), user.password()))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new BadCredentialsException("User not found"));
     }
 }

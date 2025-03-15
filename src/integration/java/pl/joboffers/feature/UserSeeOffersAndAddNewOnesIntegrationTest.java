@@ -14,6 +14,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 import pl.joboffers.BaseIntegrationTest;
 import pl.joboffers.SampleJobOfferResponse;
+import pl.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import pl.joboffers.domain.offer.dto.OfferResponseDto;
 import pl.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 
@@ -30,6 +31,8 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
     @Container
     public static final MongoDBContainer mongoDBContainer =
             new MongoDBContainer(DockerImageName.parse("mongo:4.0.10"));
+    public static final String TOKEN = "/token";
+    public static final String REGISTER = "/register";
 
     @DynamicPropertySource
     public static void propertyOverride(DynamicPropertyRegistry registry) {
@@ -40,13 +43,13 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
 
     @Autowired
     OfferFetcherScheduler offerFetcherScheduler;
-    private static final String OFFERS_URL_ENDPOINT = "/offers";
+    private static final String OFFERS = "/offers";
 
     @Test
     public void userWantToSeeOffersButHaveToBeLoggedInAndExternalServerShouldHaveSomeOffers() throws Exception {
         // step 1: there are no offers in external HTTP server
         // given & when & then
-        wireMockServer.stubFor(WireMock.get(OFFERS_URL_ENDPOINT)
+        wireMockServer.stubFor(WireMock.get(OFFERS)
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", "application/json")
@@ -61,13 +64,64 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         assertThat(offerResponseDtos).isEmpty();
 
         // step 3: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned UNAUTHORIZED(401)
+        // given
+        // when
+        ResultActions failedPerformToGetJWTToken = mockMvc.perform(post(TOKEN)
+                .content("""
+                        {
+                        "username" : "someUser",
+                        "password": "somePassword"
+                        }
+                        """.trim())
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        failedPerformToGetJWTToken
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().json("""
+                        {
+                        "message" : "Bad credentials",
+                        "status": "UNAUTHORIZED"
+                        }
+                        """.trim()
+                ));
+
         // step 4: user made GET /offers with no jwt token and system returned UNAUTHORIZED(401)
+        // given
+        // when
+        // then
+        mockMvc.perform(get(OFFERS).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+
         // step 5: user made POST /register with username=someUser, password=somePassword and system registered user with status OK(200)
+        // given
+        // when
+        ResultActions performRegister = mockMvc.perform(post(REGISTER)
+                .content("""
+                        {
+                        "username" : "someUser",
+                        "password": "somePassword"
+                        }
+                        """.trim()
+                )
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        MvcResult mvcResultRegister = performRegister.andExpect(status().isCreated()).andReturn();
+        String jsonRegister = mvcResultRegister.getResponse().getContentAsString();
+        RegistrationResultDto registrationResultDto = objectMapper.readValue(jsonRegister, RegistrationResultDto.class);
+        assertAll(
+                () -> assertThat(registrationResultDto.userId()).isNotNull(),
+                () -> assertThat(registrationResultDto.wasCreated()).isTrue(),
+                () -> assertThat(registrationResultDto.username()).isEqualTo("someUser")
+        );
+
         // step 6: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned OK(200) and jwttoken=AAAA.BBBB.CCC
         // step 7: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 0 offers
         // given
         // when
-        ResultActions resultActions = mockMvc.perform(get(OFFERS_URL_ENDPOINT)
+        ResultActions resultActions = mockMvc.perform(get(OFFERS)
                 .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -81,7 +135,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
 
         // step 8: there are 2 new offers in external HTTP server
         // given & when & then
-        wireMockServer.stubFor(WireMock.get(OFFERS_URL_ENDPOINT)
+        wireMockServer.stubFor(WireMock.get(OFFERS)
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", "application/json")
@@ -112,7 +166,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         // given
         // when
         ResultActions resultActionsForGettingNewlyAddedOffers = mockMvc
-                .perform(get(OFFERS_URL_ENDPOINT)
+                .perform(get(OFFERS)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
@@ -152,7 +206,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
 
         // when
         ResultActions resultActionsForGettingOfferWithNonExistingId = mockMvc
-                .perform(get(OFFERS_URL_ENDPOINT + "/" + nonExistingOfferId)
+                .perform(get(OFFERS + "/" + nonExistingOfferId)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
@@ -171,7 +225,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         String firstOfferId = firstOffer.id();
 
         // when
-        ResultActions performForGettingNewOffer = mockMvc.perform(get(OFFERS_URL_ENDPOINT + "/" + firstOfferId).contentType(MediaType.APPLICATION_JSON));
+        ResultActions performForGettingNewOffer = mockMvc.perform(get(OFFERS + "/" + firstOfferId).contentType(MediaType.APPLICATION_JSON));
 
         // then
         MvcResult resultForGettingNewOffer = performForGettingNewOffer.andExpect(status().isOk()).andReturn();
@@ -181,7 +235,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
 
         // step 13: there are 2 new offers in external HTTP server
         // given & when & then
-        wireMockServer.stubFor(WireMock.get(OFFERS_URL_ENDPOINT)
+        wireMockServer.stubFor(WireMock.get(OFFERS)
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", "application/json")
@@ -211,7 +265,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         // step 15: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 4 offers with ids: 1000,2000, 3000 and 4000
         // given
         // when
-        ResultActions resultActionsForGettingFourOffers = mockMvc.perform(get(OFFERS_URL_ENDPOINT)
+        ResultActions resultActionsForGettingFourOffers = mockMvc.perform(get(OFFERS)
                 .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -246,7 +300,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         // given
         // when
         ResultActions resultActionsForAddingNewOffer = mockMvc
-                .perform(post(OFFERS_URL_ENDPOINT)
+                .perform(post(OFFERS)
                         .content("""
                                 {
                                     "companyName":"testCompany",
@@ -277,7 +331,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         String newlyAddedOfferId = offerResponseDto.id();
 
         // when
-        ResultActions resultActionsForGettingOffer = mockMvc.perform(get(OFFERS_URL_ENDPOINT)
+        ResultActions resultActionsForGettingOffer = mockMvc.perform(get(OFFERS)
                 .contentType(MediaType.APPLICATION_JSON)
         );
 
