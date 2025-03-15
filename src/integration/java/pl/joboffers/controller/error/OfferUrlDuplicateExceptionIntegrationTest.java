@@ -2,6 +2,7 @@ package pl.joboffers.controller.error;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.ResultActions;
@@ -28,6 +29,7 @@ public class OfferUrlDuplicateExceptionIntegrationTest extends BaseIntegrationTe
     private static final String ADD_OFFER_ENDPOINT = "/offers";
 
     @Test
+    @WithMockUser
     public void should_return_status_409_conflict_when_added_second_offer_with_the_same_offer_url() throws Exception {
         // step 1 - adding new offer
         // given

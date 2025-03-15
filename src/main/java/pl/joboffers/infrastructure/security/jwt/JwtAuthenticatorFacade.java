@@ -18,6 +18,7 @@ import java.time.*;
 public class JwtAuthenticatorFacade {
     private final AuthenticationManager authenticationManager;
     private final Clock clock;
+    private final JwtConfigurationProperties jwtConfigurationProperties;
 
     public JwtResponseDto authenticateAndGenerateToken(TokenRequestDto tokenRequestDto) {
         Authentication authenticate = authenticationManager.authenticate(
@@ -33,11 +34,11 @@ public class JwtAuthenticatorFacade {
     }
 
     private String createToken(User user) {
-        String secretKey = "ugabuga";
+        String secretKey = jwtConfigurationProperties.secretKey();
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         Instant now = LocalDateTime.now(clock).toInstant(ZoneOffset.UTC);
-        Instant expiresAt = now.plus(Duration.ofDays(30));
-        String issuer = "Job Offers Service";
+        Instant expiresAt = now.plus(Duration.ofDays(jwtConfigurationProperties.expirationDays()));
+        String issuer = jwtConfigurationProperties.issuer();
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withClaim("role", "admin")

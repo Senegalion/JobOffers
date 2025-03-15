@@ -195,10 +195,10 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         // step 10: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 2 offers with ids: 1000 and 2000
         // given
         // when
-        ResultActions resultActionsForGettingNewlyAddedOffers = mockMvc
-                .perform(get(OFFERS)
-                        .contentType(MediaType.APPLICATION_JSON)
-                );
+        ResultActions resultActionsForGettingNewlyAddedOffers = mockMvc.perform(get(OFFERS)
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
 
         // then
         MvcResult mvcResultForGettingNewlyAddedOffers = resultActionsForGettingNewlyAddedOffers.andExpect(status().isOk()).andReturn();
@@ -235,8 +235,9 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         String nonExistingOfferId = "9999";
 
         // when
-        ResultActions resultActionsForGettingOfferWithNonExistingId = mockMvc
-                .perform(get(OFFERS + "/" + nonExistingOfferId)
+        ResultActions resultActionsForGettingOfferWithNonExistingId =
+                mockMvc.perform(get(OFFERS + "/" + nonExistingOfferId)
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
@@ -255,7 +256,10 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         String firstOfferId = firstOffer.id();
 
         // when
-        ResultActions performForGettingNewOffer = mockMvc.perform(get(OFFERS + "/" + firstOfferId).contentType(MediaType.APPLICATION_JSON));
+        ResultActions performForGettingNewOffer =
+                mockMvc.perform(get(OFFERS + "/" + firstOfferId)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON));
 
         // then
         MvcResult resultForGettingNewOffer = performForGettingNewOffer.andExpect(status().isOk()).andReturn();
@@ -295,9 +299,11 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         // step 15: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 4 offers with ids: 1000,2000, 3000 and 4000
         // given
         // when
-        ResultActions resultActionsForGettingFourOffers = mockMvc.perform(get(OFFERS)
-                .contentType(MediaType.APPLICATION_JSON)
-        );
+        ResultActions resultActionsForGettingFourOffers =
+                mockMvc.perform(get(OFFERS)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                );
 
         // then
         MvcResult resultForGettingFourOffers = resultActionsForGettingFourOffers.andExpect(status().isOk()).andReturn();
@@ -340,6 +346,7 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
                                 }
                                 """.trim()
                         )
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                 );
 
@@ -361,9 +368,11 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         String newlyAddedOfferId = offerResponseDto.id();
 
         // when
-        ResultActions resultActionsForGettingOffer = mockMvc.perform(get(OFFERS)
-                .contentType(MediaType.APPLICATION_JSON)
-        );
+        ResultActions resultActionsForGettingOffer =
+                mockMvc.perform(get(OFFERS)
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                );
 
         // then
         MvcResult mvcResultForGettingOffer = resultActionsForGettingOffer.andExpect(status().isOk()).andReturn();

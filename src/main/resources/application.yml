@@ -24,3 +24,9 @@ offer:
 
 scheduling:
   enabled: true
+
+auth:
+  jwt:
+    secretKey: ${JWT_SECRET}
+    expirationDays: 30
+    issuer: job-offers-backend
