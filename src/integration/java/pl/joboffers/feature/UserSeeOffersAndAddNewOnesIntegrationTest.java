@@ -16,9 +16,11 @@ import pl.joboffers.BaseIntegrationTest;
 import pl.joboffers.SampleJobOfferResponse;
 import pl.joboffers.domain.loginandregister.dto.RegistrationResultDto;
 import pl.joboffers.domain.offer.dto.OfferResponseDto;
+import pl.joboffers.infrastructure.loginandregister.controller.dto.JwtResponseDto;
 import pl.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -118,10 +120,38 @@ public class UserSeeOffersAndAddNewOnesIntegrationTest extends BaseIntegrationTe
         );
 
         // step 6: user tried to get JWT token by requesting POST /token with username=someUser, password=somePassword and system returned OK(200) and jwttoken=AAAA.BBBB.CCC
+        // given
+
+
+        // when
+        ResultActions performSuccessLogin = mockMvc.perform(post(TOKEN)
+                .content("""
+                        {
+                        "username" : "someUser",
+                        "password": "somePassword"
+                        }
+                        """.trim())
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        MvcResult resultSuccessLogin = performSuccessLogin
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String jsonSuccessLogin = resultSuccessLogin.getResponse().getContentAsString();
+        JwtResponseDto jwtResponseDto = objectMapper.readValue(jsonSuccessLogin, JwtResponseDto.class);
+        String token = jwtResponseDto.token();
+        assertAll(
+                () -> assertThat(jwtResponseDto.username()).isEqualTo("someUser"),
+                () -> assertThat(token).matches(Pattern.compile("^([A-Za-z0-9-_=]+\\.)+([A-Za-z0-9-_=])+\\.?$"))
+        );
+
         // step 7: user made GET /offers with header “Authorization: Bearer AAAA.BBBB.CCC” and system returned OK(200) with 0 offers
         // given
         // when
         ResultActions resultActions = mockMvc.perform(get(OFFERS)
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
         );
 
