@@ -72,6 +72,7 @@ This application automates the collection of job offers, ensuring that Junior Ja
 
     -   The application will be accessible at `http://localhost:8082`.
     -   MongoExpress will be accessible at `http://localhost:8081`.
+        -   **Note:** MongoExpress requires login. Use `admin` as username and `pass` as password.
     -   Redis commander is accessible at `http://localhost:8083`
     -   Swagger UI will be accessible at `http://localhost:8082/swagger-ui/index.html`
 
