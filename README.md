@@ -102,4 +102,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-For questions or feedback, please contact me via [email](mailto:your_email@example.com).
+For questions or feedback, please contact me via [email](mailto:lupelikan@gmail.com).
