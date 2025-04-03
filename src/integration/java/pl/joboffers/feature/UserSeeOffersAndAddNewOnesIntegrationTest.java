@@ -14,7 +14,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 import pl.joboffers.BaseIntegrationTest;
 import pl.joboffers.SampleJobOfferResponse;
-import pl.joboffers.domain.loginandregister.dto.RegistrationResultDto;
+import pl.joboffers.domain.register.dto.RegistrationResultDto;
 import pl.joboffers.domain.offer.dto.OfferResponseDto;
 import pl.joboffers.infrastructure.loginandregister.controller.dto.JwtResponseDto;
 import pl.joboffers.infrastructure.offer.scheduler.OfferFetcherScheduler;

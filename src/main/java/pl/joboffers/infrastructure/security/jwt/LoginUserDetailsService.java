@@ -5,18 +5,18 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import pl.joboffers.domain.loginandregister.LoginAndRegisterFacade;
-import pl.joboffers.domain.loginandregister.dto.UserDto;
+import pl.joboffers.domain.register.RegisterFacade;
+import pl.joboffers.domain.register.dto.UserDto;
 
 import java.util.Collections;
 
 @AllArgsConstructor
 public class LoginUserDetailsService implements UserDetailsService {
-    private final LoginAndRegisterFacade loginAndRegisterFacade;
+    private final RegisterFacade registerFacade;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws BadCredentialsException {
-        UserDto userFound = loginAndRegisterFacade.findByUsername(username);
+        UserDto userFound = registerFacade.findByUsername(username);
         return getUser(userFound);
     }
 

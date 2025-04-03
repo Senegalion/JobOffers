@@ -41,7 +41,6 @@ public class JwtAuthenticatorFacade {
         String issuer = jwtConfigurationProperties.issuer();
         return JWT.create()
                 .withSubject(user.getUsername())
-                .withClaim("role", "admin")
                 .withIssuedAt(now)
                 .withExpiresAt(expiresAt)
                 .withIssuer(issuer)

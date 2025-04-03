@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.joboffers.domain.loginandregister.LoginAndRegisterFacade;
+import pl.joboffers.domain.register.RegisterFacade;
 
 @Configuration
 @AllArgsConstructor
@@ -31,8 +31,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(LoginAndRegisterFacade loginAndRegisterFacade) {
-        return new LoginUserDetailsService(loginAndRegisterFacade);
+    public UserDetailsService userDetailsService(RegisterFacade registerFacade) {
+        return new LoginUserDetailsService(registerFacade);
     }
 
     @Bean
@@ -40,6 +40,7 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .antMatchers("/").permitAll()
                         .antMatchers("/swagger-ui/**").permitAll()
                         .antMatchers("/v3/api-docs").permitAll()
                         .antMatchers("/webjars/**").permitAll()

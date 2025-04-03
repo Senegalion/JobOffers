@@ -1,4 +1,4 @@
-package pl.joboffers.domain.loginandregister;
+package pl.joboffers.domain.register;
 
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
