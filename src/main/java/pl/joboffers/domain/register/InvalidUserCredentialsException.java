@@ -1,4 +1,4 @@
-package pl.joboffers.domain.loginandregister;
+package pl.joboffers.domain.register;
 
 class InvalidUserCredentialsException extends RuntimeException {
     public InvalidUserCredentialsException(String message) {

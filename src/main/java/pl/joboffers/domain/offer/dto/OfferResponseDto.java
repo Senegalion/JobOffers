@@ -10,5 +10,6 @@ public record OfferResponseDto(
         String companyName,
         String position,
         String salary,
-        String offerUrl) implements Serializable {
+        String offerUrl
+) implements Serializable {
 }

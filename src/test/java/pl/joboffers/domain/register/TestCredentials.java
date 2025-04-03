@@ -1,4 +1,4 @@
-package pl.joboffers.domain.loginandregister;
+package pl.joboffers.domain.register;
 
 public class TestCredentials {
     public static String getUsername() {
