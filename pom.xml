@@ -106,9 +106,9 @@
         </dependency>
         <!--  SWAGGER http://localhost:8082/swagger-ui/#/ -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${springfox-boot-starter.version}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.8.0</version>
         </dependency>
         <!--  JWT -->
         <dependency>

@@ -81,6 +81,180 @@ This application automates the collection of job offers, ensuring that Junior Ja
 -   Utilize Swagger UI for API documentation and testing.
 -   Monitor the application and database using MongoExpress and Redis Commander.
 
+# API Endpoints
+
+## Registration
+
+`POST /register`
+
+Registers a new user.
+
+**Request Body Example:**
+
+```json
+{
+  "username": "newuser",
+  "password": "password123"
+}
+```
+
+**Response:**
+
+```json
+{
+  "userId": "user-id",
+  "wasCreated": true,
+  "username": "newuser"
+}
+```
+
+## Authentication (Login)
+
+`POST /token`
+
+Authenticates a user and generates a JWT token.
+
+**Request Body Example:**
+
+```json
+{
+  "username": "newuser",
+  "password": "password123"
+}
+```
+
+**Response:**
+
+```json
+{
+  "username": "newuser",
+  "token": "generated-jwt-token"
+}
+```
+
+## Job Offer Endpoints (Requires Authentication)
+Note: The following endpoints require a valid JWT token in the Authorization header.
+
+## Get All Job Offers
+
+`GET /offers`
+
+Retrieves all available job offers.
+
+**Response:**
+
+```json
+[
+  {
+    "offerId": "offer-id",
+    "title": "Junior Java Developer",
+    "company": "Company Name",
+    "location": "Location",
+    "description": "Job description here...",
+    "url": "[http://job-offer-link.com](http://job-offer-link.com)"
+  }
+]
+```
+
+## Get Job Offer by ID
+
+`GET /offers/{offerId}`
+
+Retrieves details of a job offer by its ID.
+
+**Response:**
+
+```json
+[
+  {
+    "offerId": "offer-id",
+    "title": "Junior Java Developer",
+    "company": "Company Name",
+    "location": "Location",
+    "description": "Job description here...",
+    "url": "[http://job-offer-link.com](http://job-offer-link.com)"
+  }
+]
+```
+
+## Add a New Job Offer
+
+`POST /offers`
+
+Retrieves details of a job offer by its ID.
+
+**Request Body Example:**
+
+```json
+[
+  {
+    "title": "Junior Java Developer",
+    "company": "Company Name",
+    "location": "Location",
+    "description": "Job description here...",
+    "url": "[http://job-offer-link.com](http://job-offer-link.com)"
+  }
+]
+```
+
+**Response:**
+
+```json
+[
+  {
+    "offerId": "new-offer-id",
+    "title": "Junior Java Developer",
+    "company": "Company Name",
+    "location": "Location",
+    "description": "Job description here...",
+    "url": "[http://job-offer-link.com](http://job-offer-link.com)"
+  }
+]
+```
+
+# Error Handling
+
+The API returns the following error codes:
+
+* **400 Bad Request:** Invalid input data (e.g., missing required fields in the request).
+* **404 Not Found:** The job offer was not found.
+* **500 Internal Server Error:** A server error occurred.
+
+# Swagger UI (API Testing)
+
+You can easily explore and test the API using Swagger UI.
+
+1. **Access Swagger UI:** After running the application, navigate to the following URL in your web browser:
+
+   ```
+   http://localhost:8082/swagger-ui/index.html
+   ```
+
+2. **Interactive Interface:** You will be presented with an interactive interface where you can:
+
+    * View all available API endpoints.
+    * Test each endpoint by sending requests and inspecting the responses.
+    * Interact with the API in a user-friendly way without manually crafting HTTP requests.
+
+3. **Example:** Here's an example of what the Swagger UI interface might look like:
+
+   ![Swagger UI Screenshot](images/swagger-ui-screenshot.png)
+
+# Integration Testing
+
+The application includes integration tests to validate the functionality of the endpoints.
+
+To run the tests, use:
+
+```bash
+./mvnw test
+```
+
+Tests include:
+
+- verifying the correctness of retrieving job offers.
+- handling errors for invalid input data.
+
 ## Contribution
 
 Contributions are welcome! Please follow these steps:
