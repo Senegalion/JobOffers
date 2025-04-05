@@ -14,12 +14,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pl.joboffers.domain.register.RegisterFacade;
 
 @Configuration
 @AllArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
     private final JwtAuthTokenFiler jwtAuthTokenFiler;
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -54,5 +57,14 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(jwtAuthTokenFiler, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
