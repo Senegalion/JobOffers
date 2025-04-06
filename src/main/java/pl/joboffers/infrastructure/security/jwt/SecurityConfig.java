@@ -14,12 +14,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pl.joboffers.domain.register.RegisterFacade;
 
 @Configuration
 @AllArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
     private final JwtAuthTokenFiler jwtAuthTokenFiler;
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -39,6 +41,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .antMatchers("/").permitAll()
                         .antMatchers("/swagger-ui/**").permitAll()
