@@ -2,6 +2,7 @@ version: '3.1'
 
 services:
   mongo:
+    container_name: mongo
     image: mongo:4.0.10
     restart: always
     ports:
@@ -37,3 +38,28 @@ services:
       - REDIS_PORT=6379
     ports:
       - "8083:8081"
+
+  job-offers:
+    container_name: job-offers
+#    build: .
+    image: 782033877607.dkr.ecr.eu-central-1.amazonaws.com/job-offers:latest
+    restart: always
+    ports:
+      - '8000:8080'
+    environment:
+      MONGO_USER: admin
+      MONGO_PASSWORD: admin
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_DB_NAME: job-offers
+      MONGO_AUTH_SOURCE: job-offers
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  job-offers-frontend:
+    container_name: job-offers-frontend
+#    image: joboffersfrontend:latest
+    image: 782033877607.dkr.ecr.eu-central-1.amazonaws.com/job-offers-frontend:latest
+    restart: always
+    ports:
+      - '80:80'
