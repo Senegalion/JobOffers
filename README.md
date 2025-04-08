@@ -10,6 +10,9 @@ This application automates the collection of job offers, ensuring that Junior Ja
 
 This project uses a modular monolithic application architecture with elements of hexagonal principles.
 
+## 🔗 Live Demo: [live-demo](http://ec2-18-199-167-57.eu-central-1.compute.amazonaws.com)  
+Hosted on AWS (EC2 + ECR) with full Docker-based deployment.
+
 ## Features
 
 -   **Automated Job Offer Aggregation**: Fetches job listings from multiple websites and applications.
@@ -21,6 +24,8 @@ This project uses a modular monolithic application architecture with elements of
 -   **Scheduling**: Uses Spring Scheduler for periodic job offer updates.
 -   **Caching**: Redis integration for improved performance and reduced database load.
 -   **Containerization**: Docker and Docker Compose for easy deployment and scalability.
+-   **Live Demo**: Deployed on AWS EC2 with Dockerized setup. Publicly accessible demo for showcasing features.
+-   **React Frontend (WIP)**: Frontend integration in progress using React to enhance user experience.
 
 ## Architecture
 
@@ -62,6 +67,10 @@ JobOffers is developed using the following technologies:
 | **Project Management**| <img src="https://img.shields.io/badge/SCRUM-blue" alt="SCRUM" /> <img src="https://img.shields.io/badge/Jira-blue" alt="Jira" />                                                                                             |
 |                       | SCRUM, Jira                                                                                                                                                                                                            |
 | **Dev. Practices** | Code Review, Pair Programming                                                                                                                                                                                        |
+| **Frontend** | <img src="https://img.shields.io/badge/React-v18-blue" alt="React" />                                                                                                                                              |
+|              | React (basic UI integration – WIP)    
+| **Hosting** | <img src="https://img.shields.io/badge/AWS-EC2-orange" alt="AWS EC2" /> <img src="https://img.shields.io/badge/AWS-ECR-orange" alt="AWS ECR" /> <img src="https://img.shields.io/badge/Security_Groups-green" alt="Security Groups" /> |
+|             | AWS EC2, Amazon ECR, IAM Roles, Security Groups configuration    
 
 ## Installation and Setup
 
