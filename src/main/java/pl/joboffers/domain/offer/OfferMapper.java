@@ -4,12 +4,21 @@ import pl.joboffers.domain.offer.dto.JobOfferResponseDto;
 import pl.joboffers.domain.offer.dto.OfferRequestDto;
 import pl.joboffers.domain.offer.dto.OfferResponseDto;
 
-class OfferMapper {
+public class OfferMapper {
     public static OfferResponseDto mapToOfferResponseDto(Offer offer) {
         return OfferResponseDto.builder()
                 .id(offer.id())
                 .companyName(offer.companyName())
                 .position(offer.position())
+                .salary(offer.salary())
+                .offerUrl(offer.offerUrl())
+                .build();
+    }
+
+    public static JobOfferResponseDto mapToJobOfferResponseDto(Offer offer) {
+        return JobOfferResponseDto.builder()
+                .title(offer.position())
+                .company(offer.companyName())
                 .salary(offer.salary())
                 .offerUrl(offer.offerUrl())
                 .build();

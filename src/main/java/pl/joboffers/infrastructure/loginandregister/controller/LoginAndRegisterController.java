@@ -16,7 +16,6 @@ import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
 public class LoginAndRegisterController {
     private final RegisterFacade registerFacade;
     private final PasswordEncoder passwordEncoder;

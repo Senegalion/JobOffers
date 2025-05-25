@@ -14,7 +14,6 @@ import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
 public class TokenController {
     private final JwtAuthenticatorFacade jwtAuthenticatorFacade;
 

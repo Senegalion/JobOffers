@@ -41,8 +41,8 @@ services:
 
   job-offers:
     container_name: job-offers
-#    build: .
-    image: 782033877607.dkr.ecr.eu-central-1.amazonaws.com/job-offers:latest
+    build: .
+#    image: 782033877607.dkr.ecr.eu-central-1.amazonaws.com/job-offers:latest
     restart: always
     ports:
       - '8000:8080'
@@ -58,8 +58,8 @@ services:
 
   job-offers-frontend:
     container_name: job-offers-frontend
-#    image: joboffersfrontend:latest
-    image: 782033877607.dkr.ecr.eu-central-1.amazonaws.com/job-offers-frontend:latest
+    image: joboffersfrontend:latest
+#    image: 782033877607.dkr.ecr.eu-central-1.amazonaws.com/job-offers-frontend:latest
     restart: always
     ports:
       - '80:80'

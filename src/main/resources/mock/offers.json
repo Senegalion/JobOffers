@@ -1,0 +1,92 @@
+[
+  {
+    "title": "Junior Java Developer",
+    "company": "Mocked Company",
+    "salary": "8000 - 10000 PLN",
+    "offerUrl": "https://mocked.pl/job1"
+  },
+  {
+    "title": "Java Intern",
+    "company": "StartupX",
+    "salary": "5000 PLN",
+    "offerUrl": "https://mocked.pl/job2"
+  },
+  {
+    "title": "Junior Backend Developer",
+    "company": "TechNest",
+    "salary": "9000 PLN",
+    "offerUrl": "https://mocked.pl/job3"
+  },
+  {
+    "title": "Junior Java Engineer",
+    "company": "Cloudify",
+    "salary": "8500 PLN",
+    "offerUrl": "https://mocked.pl/job4"
+  },
+  {
+    "title": "Java Trainee Developer",
+    "company": "FutureSoft",
+    "salary": "4500 - 5500 PLN",
+    "offerUrl": "https://mocked.pl/job5"
+  },
+  {
+    "title": "Junior Software Developer",
+    "company": "NextCode",
+    "salary": "8000 PLN",
+    "offerUrl": "https://mocked.pl/job6"
+  },
+  {
+    "title": "Junior Java Programmer",
+    "company": "DevStream",
+    "salary": "7000 - 9500 PLN",
+    "offerUrl": "https://mocked.pl/job7"
+  },
+  {
+    "title": "Java Developer - Entry Level",
+    "company": "GreenApps",
+    "salary": "7800 PLN",
+    "offerUrl": "https://mocked.pl/job8"
+  },
+  {
+    "title": "Junior Fullstack Developer (Java + React)",
+    "company": "CodeWay",
+    "salary": "9500 PLN",
+    "offerUrl": "https://mocked.pl/job9"
+  },
+  {
+    "title": "Junior Java Developer (Remote)",
+    "company": "RemoteForce",
+    "salary": "8700 PLN",
+    "offerUrl": "https://mocked.pl/job10"
+  },
+  {
+    "title": "Junior Java Developer with Spring",
+    "company": "SpringLab",
+    "salary": "8000 PLN",
+    "offerUrl": "https://mocked.pl/job11"
+  },
+  {
+    "title": "Trainee Java Software Engineer",
+    "company": "TechTrain",
+    "salary": "4800 PLN",
+    "offerUrl": "https://mocked.pl/job12"
+  },
+  {
+    "title": "Junior Java Developer – FinTech",
+    "company": "FinTechCo",
+    "salary": "8700 - 9300 PLN",
+    "offerUrl": "https://mocked.pl/job13"
+  },
+  {
+    "title": "Java Junior Developer – E-commerce",
+    "company": "ShopLogic",
+    "salary": "8900 PLN",
+    "offerUrl": "https://mocked.pl/job14"
+  },
+  {
+    "title": "Junior Java Developer – Healthcare",
+    "company": "MediDev",
+    "salary": "8500 PLN",
+    "offerUrl": "https://mocked.pl/job15"
+  }
+]

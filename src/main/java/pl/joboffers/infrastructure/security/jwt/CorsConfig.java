@@ -13,11 +13,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(
-                                "http://localhost",
-                                "http://localhost:3000",
-                                "http://ec2-18-199-167-57.eu-central-1.compute.amazonaws.com:8000"
-                        )
+                        .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

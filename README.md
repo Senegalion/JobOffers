@@ -4,6 +4,8 @@
 
 `JobOffers` is a web application designed to aggregate job offers specifically for Junior Java Developers from various online sources. The primary goal is to provide a centralized platform with up-to-date job listings from diverse websites and applications, simplifying the job search process.
 
+Video Demo: https://www.youtube.com/watch?v=odNjBvRsTFs
+
 ## Project Description
 
 This application automates the collection of job offers, ensuring that Junior Java Developers have access to the latest opportunities in their field. It features robust backend services for data retrieval, storage, and management, along with API endpoints for seamless integration.

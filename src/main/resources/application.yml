@@ -21,7 +21,7 @@ offer:
   http:
     scheduler:
       request:
-        delay: PT1s
+        delay: PT3H
     client:
       config:
         connectionTimeout: 5000

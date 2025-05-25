@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 @Builder
 @Document("offers")
-record Offer(
+public record Offer(
         @Id
         String id,
         @Field("company")
